@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@capacitor/android": "^5.7.0",
+    "@capacitor/ios": "^5.7.0",
     "@emailjs/browser": "^3.12.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -28,6 +30,7 @@
     "mdb-react-ui-kit": "^6.3.0",
     "mdb-ui-kit": "^7.1.0",
     "mdb-vue-ui-kit": "^4.1.1",
+    "ml-regression": "^5.0.0",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
     "react-autosuggest": "^10.1.0",
@@ -70,6 +73,8 @@
     ]
   },
   "devDependencies": {
+    "@capacitor/cli": "^5.7.0",
+    "@capacitor/core": "^5.7.0",
     "@types/zxcvbn": "^4.4.3",
     "react-router-dom": "^6.16.0"
   }

@@ -365,7 +365,7 @@ const handleSelectChange = (e) => {
     
           if (!querySnapshot.empty) {
             const poolData = querySnapshot.docs.map((doc) => {
-              const { title } = doc.data(); // Assuming 'title' is a field in your 'Pools' documents
+              const { title } = doc.data(); 
               return { id: doc.id, title };
             });
             setPoolIds(poolData);
@@ -378,28 +378,53 @@ const handleSelectChange = (e) => {
       fetchPoolIds();
     }, [user.uid]);
   
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          // Make a query to Firestore to get pool data
-          const poolsCollection = collection(firestore, "Pools");
-          const querySnapshot = await getDocs(query(poolsCollection, where('Adminid', '==', user.uid)));
-          const poolsData = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     try {
+    //       // Make a query to Firestore to get pool data
+    //       const poolsCollection = collection(firestore, "Pools");
+    //       const querySnapshot = await getDocs(query(poolsCollection, where('Adminid', '==', user.uid)));
+    //       const poolsData = querySnapshot.docs.map((doc) => ({
+    //         id: doc.id,
+    //         ...doc.data(),
+    //       }));
     
-          // Update the state with fetched pool data
-          setPools(poolsData);
-        } catch (error) {
-          console.error("Error fetching pools:", error.message);
-        }
-      };
+    //       // Update the state with fetched pool data
+    //       setPools(poolsData);
+    //       console.log(poolsData);
+    //     } catch (error) {
+    //       console.error("Error fetching pools:", error.message);
+    //     }
+    //   };
     
-      // Call the fetchData function when the component mounts
-      fetchData();
-    }, [user.uid]);
+    //   // Call the fetchData function when the component mounts
+    //   fetchData();
+    // }, [user.uid]);
+
+
+   useEffect(()=>{
+
+    const  fetchData1 = async () => {
+      try{
+
+      const PoolsData=await PoolService.getPooldata(user.uid);
+   
+      setPools(PoolsData);
+     
+
+   
+      }
+      catch(error){
+      console.error("Error fetching pools:", error.message);
+      }
+    }
+     fetchData1();
+   })
+   
+   
     
+
+
 
     const handleActive = async (selectedPoolId) => {
       try {
@@ -418,8 +443,8 @@ const handleSelectChange = (e) => {
         // Fetch all pools related to the current user
         const querySnapshot = await getDocs(query(poolsCollection, where('Adminid', '==', user.uid)));
     
-        // Update other pools with poolActive: null
-        const updatePromises = querySnapshot.docs.map(async (doc) => {
+             // Update other pools with poolActive: null
+           const updatePromises = querySnapshot.docs.map(async (doc) => {
           const poolId = doc.id;
           if (poolId !== selectedPoolId) {
             const poolRef = doc.ref;
@@ -532,25 +557,25 @@ const handleSelectChange = (e) => {
     </Modal>
   );
   const generateCsvData = (data) => {
-    const header = ['Pool ID', 'Pool Title', 'Description', 'Start Date & Time', 'End Date & Time', 'Vote Type'];
-    const rows = data.map((pool) => [
-      pool.id,
-      pool.title,
-      pool.description,
-      pool.stdate instanceof Date
-        ? pool.stdate.toLocaleString()
-        : pool.stdate.seconds
-        ? new Date(pool.stdate.seconds * 1000).toLocaleString()
-        : pool.stdate,
-      pool.enddate instanceof Date
-        ? pool.enddate.toLocaleString()
-        : pool.enddate.seconds
-        ? new Date(pool.enddate.seconds * 1000).toLocaleString()
-        : pool.enddate,
-      pool.Type,
-    ]);
+    // const header = ['Pool ID', 'Pool Title', 'Description', 'Start Date & Time', 'End Date & Time', 'Vote Type'];
+    // const rows = data.map((pool) => [
+    //   pool.id,
+    //   pool.title,
+    //   pool.description,
+    //   pool.stdate instanceof Date
+    //     ? pool.stdate.toLocaleString()
+    //     : pool.stdate.seconds
+    //     ? new Date(pool.stdate.seconds * 1000).toLocaleString()
+    //     : pool.stdate,
+    //   pool.enddate instanceof Date
+    //     ? pool.enddate.toLocaleString()
+    //     : pool.enddate.seconds
+    //     ? new Date(pool.enddate.seconds * 1000).toLocaleString()
+    //     : pool.enddate,
+    //   pool.Type,
+    // ]);
   
-    return [header, ...rows].map((row) => row.join(',')).join('\n');
+    // return [header, ...rows].map((row) => row.join(',')).join('\n');
   };
   
   const handleDownload = (data) => {
@@ -698,56 +723,57 @@ const handleSelectChange = (e) => {
         </TableRow>
       </TableHead>
       <TableBody  style={{borderColor:'black'}}>
-        {pools
-          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-          .map((pool) => (
-            <TableRow key={pool.id} >
-              <TableCell>{pool.id}</TableCell>
-              <TableCell>{pool.title}</TableCell>
-              <TableCell>{pool.description}</TableCell>
-              <TableCell>
-                {pool.stdate instanceof Date
-                  ? pool.stdate.toLocaleString()
-                  : pool.stdate.seconds
-                  ? new Date(pool.stdate.seconds * 1000).toLocaleString()
-                  : pool.stdate}
-              </TableCell>
-              <TableCell>
-                {pool.enddate instanceof Date
-                  ? pool.enddate.toLocaleString()
-                  : pool.enddate.seconds
-                  ? new Date(pool.enddate.seconds * 1000).toLocaleString()
-                  : pool.enddate}
-              </TableCell>
-              <TableCell>{pool.Type}</TableCell>
-              <TableCell>
-                {pool.sponsorImage1 && (
-                  <div>
-                    <img src={pool.sponsorImage1} alt="Sponsor Image 1" style={{ maxWidth: '100px' }} />
-                    <br />
-                    <img src={pool.sponsorImage2} alt="Sponsor Image 2" style={{ maxWidth: '100px' }} />
-                  </div>
-                )}
-              </TableCell>
-              <TableCell>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => handleEditClick(pool)}
-                >
-                  Edit
-                </Button>
-                {' '}
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleDelete(pool)}
-                >
-                  Delete
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+      {pools
+  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  .map((pool) => (
+    <TableRow key={pool.id} >
+      <TableCell>{pool.fields.poolId.stringValue}</TableCell>
+      <TableCell>{pool.fields.title.stringValue}</TableCell>
+      <TableCell>{pool.fields.description.stringValue}</TableCell>
+      <TableCell>
+        {
+          pool.fields.stdate.timestampValue instanceof Date
+            ? new Date(pool.fields.stdate.timestampValue).toLocaleString()
+            : new Date(pool.fields.stdate.timestampValue).toLocaleString()
+        }
+      </TableCell>
+      <TableCell>
+        {
+          pool.fields.enddate.timestampValue instanceof Date
+            ? new Date(pool.fields.enddate.timestampValue).toLocaleString()
+            : new Date(pool.fields.enddate.timestampValue).toLocaleString()
+        }
+      </TableCell>
+      <TableCell>{pool.fields.Type.stringValue}</TableCell>
+      <TableCell>
+        {pool.fields.sponsorImage1 && (
+          <div>
+            <img src={pool.fields.sponsorImage1.stringValue} alt="Sponsor Image 1" style={{ maxWidth: '100px' }} />
+            <br />
+            <img src={pool.fields.sponsorImage2.stringValue} alt="Sponsor Image 2" style={{ maxWidth: '100px' }} />
+          </div>
+        )}
+      </TableCell>
+      <TableCell>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => handleEditClick(pool)}
+        >
+          Edit
+        </Button>
+        {' '}
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => handleDelete(pool)}
+        >
+          Delete
+        </Button>
+      </TableCell>
+    </TableRow>
+  ))}
+
       </TableBody>
     </Table>
     <TablePagination

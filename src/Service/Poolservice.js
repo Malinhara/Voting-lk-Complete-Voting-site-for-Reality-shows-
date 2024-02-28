@@ -1,5 +1,5 @@
 import axios from "axios";
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase"; // Import firestore from your Firebase configuration file
 
 class PoolService {
@@ -54,12 +54,38 @@ class PoolService {
 
   static async deletePool(poolId) {
     try {
-      const poolRef = doc(firestore, 'Pools', poolId);
-      await deleteDoc(poolRef);
+      const response = await axios.delete(`https://firestore.googleapis.com/v1/projects/voting-app-9cc9e/databases/(default)/documents/Pools/${poolId}`);
+      const poolData = response.data;
+      return poolData;
     } catch (error) {
       throw new Error('Error deleting pool from Firestore: ' + error.message);
     }
   }
+
+
+
+
+  static async getPooldata(userId) {
+    try {
+      // Make a GET request to Firestore API to fetch all pools data
+      const response = await axios.get(`https://firestore.googleapis.com/v1/projects/voting-app-9cc9e/databases/(default)/documents/Pools`);
+
+      // Extract and filter pools data from the response
+      const poolsData = response.data;
+      const filteredPoolsData = poolsData.documents.filter(doc => {
+        const adminId = doc.fields && doc.fields.Adminid && doc.fields.Adminid.stringValue;
+        return adminId === userId;
+      });
+  
+     
+      return filteredPoolsData;
+    } catch (error) {
+      throw new Error('Error getting pools data: ' + error.message);
+    }
+  }
+
+
+
 
   static async updatePool(pool, id) {
     try {
