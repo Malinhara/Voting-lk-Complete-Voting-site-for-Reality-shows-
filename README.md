@@ -1,3 +1,21 @@
+
+#Home(user view)
+
+![Type 1_ Closely match the original screenshot](https://github.com/Malinhara/Voting-lk-Complete-Voting-site-for-Reality-shows-/assets/131478375/0964f7b4-ba13-4d99-8b23-ed5d7a7b2756)
+
+
+
+#Pool page (Every admin have own admin pannel)
+
+![Type 1_ Closely match the original screenshot (1)](https://github.com/Malinhara/Voting-lk-Complete-Voting-site-for-Reality-shows-/assets/131478375/392680aa-d95d-4f2d-8c02-4a4c29aed21c)
+
+
+
+#Admim home
+![Type 1_ Closely match the original screenshot](https://github.com/Malinhara/Voting-lk-Complete-Voting-site-for-Reality-shows-/assets/131478375/56bfdf12-664d-47e2-a33c-75e4af6cdcb1)
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
